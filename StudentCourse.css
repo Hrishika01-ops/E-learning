@@ -1,0 +1,108 @@
+/* Color Palette Reference:
+.first-color:  #f7f7f7 (Backgrounds)
+.second-color: #eeeeee (Cards / lighter accents)
+.third-color:  #393e46 (Text & Highlights)
+.fourth-color: #929aab (Borders / Muted accents)
+*/
+
+.student-course-page {
+    background-color: #f7f7f7; /* first-color */
+    min-height: 100vh;
+    padding: 20px;
+  }
+  
+  .heading {
+    text-align: center;
+    font-size: 28px;
+    margin-bottom: 30px;
+    color: #393e46; /* third-color */
+  }
+  
+  /* Toggle Switch */
+  .custom-toggle-wrapper {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 30px;
+  }
+  
+  .custom-toggle {
+    display: flex;
+    width: 300px;
+    border: 2px solid #929aab; /* fourth-color */
+    border-radius: 50px;
+    overflow: hidden;
+    background-color: #eeeeee; /* second-color */
+    cursor: pointer;
+    box-shadow: 0 0 6px rgba(57, 62, 70, 0.1); /* third-color translucent */
+  }
+  
+  .toggle-option {
+    flex: 1;
+    padding: 10px 0;
+    text-align: center;
+    font-weight: bold;
+    color: #393e46; /* third-color */
+    background-color: transparent;
+    transition: all 0.3s ease;
+  }
+  
+  .toggle-option.active {
+    background-color: #393e46; /* third-color */
+    color: #f7f7f7; /* first-color */
+  }
+  
+  /* Courses */
+  .course-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+  }
+  
+  .course-card {
+    background-color: #eeeeee; /* second-color */
+    border: 1px solid #929aab; /* fourth-color */
+    border-radius: 8px;
+    width: 300px;
+    overflow: hidden;
+    box-shadow: 0 0 8px rgba(57, 62, 70, 0.15);
+  }
+  
+  .course-image {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+  }
+  
+  .course-details {
+    padding: 15px;
+    color: #393e46; /* third-color */
+  }
+  
+  .course-details h3 {
+    margin: 10px 0;
+    color: #393e46;
+  }
+  
+  .course-details p {
+    margin: 5px 0;
+    font-size: 14px;
+  }
+  
+  /* Enroll Button */
+  .enroll-button {
+    margin-top: 10px;
+    padding: 8px 12px;
+    background-color: #393e46; /* third-color */
+    border: none;
+    color: #f7f7f7; /* first-color */
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+  }
+  
+  .enroll-button:hover {
+    background-color: #929aab; /* fourth-color */
+    color: #f7f7f7;
+  }
+  
