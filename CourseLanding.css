@@ -1,0 +1,128 @@
+/* Color Palette Reference:
+.first-color:  #f7f7f7 (Backgrounds)
+.second-color: #eeeeee (Cards / lighter accents)
+.third-color:  #393e46 (Text & Highlights)
+.fourth-color: #929aab (Borders / Muted accents)
+*/
+
+.course-landing-page {
+    background-color: #f7f7f7;
+    min-height: 100vh;
+    padding: 20px;
+  }
+  
+  .heading {
+    text-align: center;
+    font-size: 32px;
+    margin-bottom: 30px;
+    color: #393e46;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  
+  /* Form Fields */
+  .form-group {
+    margin-bottom: 20px;
+  }
+  
+  .form-group label {
+    display: block;
+    font-weight: 800;
+    color: #393e46;
+    margin-bottom: 8px;
+    font-size: 18px;
+    text-transform: capitalize;
+  }
+  
+  .field-description {
+    font-size: 14px;
+    color: #929aab;
+    font-style: italic;
+    margin-top: 4px;
+  }
+  
+  .form-group input,
+  .form-group select,
+  .form-group textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #929aab;
+    border-radius: 4px;
+    background-color: #eeeeee;
+    color: #393e46;
+    font-size: 16px;
+  }
+  
+  .form-group textarea {
+    resize: vertical;
+  }
+  
+  /* Image Upload */
+  .image-upload {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  
+  .image-upload input[type="file"] {
+    display: none;
+  }
+  
+  .image-upload label {
+    background-color: #393e46;
+    color: #f7f7f7;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+  }
+  
+  .image-preview {
+    margin-top: 10px;
+    max-height: 200px;
+    object-fit: cover;
+    border: 1px solid #929aab;
+    border-radius: 4px;
+  }
+  
+  /* Save Button */
+  .save-button {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    background-color: #393e46;
+    border: none;
+    color: #f7f7f7;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 16px;
+  }
+  
+  .save-button:hover {
+    background-color: #929aab;
+  }
+  
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    .course-landing-page {
+      padding: 10px;
+    }
+  
+    .heading {
+      font-size: 24px;
+    }
+  
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      font-size: 14px;
+    }
+  
+    .save-button {
+      font-size: 14px;
+    }
+  }
+  

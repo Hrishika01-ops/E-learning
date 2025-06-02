@@ -6,7 +6,7 @@
 */
 
 .student-course-page {
-    background-color: #f7f7f7; /* first-color */
+    /* background-color: #f7f7f7; first-color */
     min-height: 100vh;
     padding: 20px;
   }
@@ -15,7 +15,7 @@
     text-align: center;
     font-size: 28px;
     margin-bottom: 30px;
-    color: #393e46; /* third-color */
+    color: white; /* third-color */
   }
   
   /* Toggle Switch */

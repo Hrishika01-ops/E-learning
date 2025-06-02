@@ -165,7 +165,7 @@ const StudentCourse: React.FC = () => {
 
   return (
     <>
-    <Navbar role="student" />
+    <Navbar userRole="student" />
     <div className="student-course-page">
       <div className="custom-toggle-wrapper">
   <div className="custom-toggle">
@@ -188,7 +188,7 @@ const StudentCourse: React.FC = () => {
 
       <div className="course-container">
         {displayCourses.length === 0 ? (
-          <p style={{ textAlign: 'center', width: '100%' }}>No courses to display</p>
+          <p style={{ textAlign: 'center', width: '100%', color: 'white'}}>No courses to display</p>
         ) : (
           displayCourses.map((course) => (
             <div key={course.courseID} className="course-card">

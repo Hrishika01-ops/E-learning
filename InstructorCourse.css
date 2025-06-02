@@ -7,7 +7,10 @@
     font-weight: bold;
     cursor: pointer;
   }
-  
+  .cbody {
+    background-color: #eeeeee;
+    color: #eee;
+  }
   .create-button:hover {
     background-color: #929aab;
   }
@@ -21,7 +24,7 @@
   
   .course-card {
     width: 280px;
-    background-color: #eeeeee;
+    /* background-color: #929aab; */
     border: 1px solid #929aab;
     border-radius: 8px;
     box-shadow: 0 0 8px rgba(57, 62, 70, 0.1);
@@ -76,14 +79,14 @@
     background-color: #6b6f7a;
   }
   
-  .modal-overlay {
+  /*.modal-overlay {
     position: fixed;
     inset: 0;
     background-color: rgba(0, 0, 0, 0.5);
     display: flex;
     justify-content: center;
     align-items: center;
-  }
+  }*/
   
   .modal {
     background-color: #eeeeee;
