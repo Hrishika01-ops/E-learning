@@ -17,7 +17,7 @@ interface CourseData {
 
 interface CurriculumBuilderProps {
   courseData: CourseData;
-  setCourseData: React.Dispatch<React.SetStateAction<CourseData>>;
+  setCourseData: any;
 }
 
 const CurriculumBuilder: React.FC<CurriculumBuilderProps> = ({ courseData, setCourseData }) => {
@@ -45,7 +45,13 @@ const CurriculumBuilder: React.FC<CurriculumBuilderProps> = ({ courseData, setCo
       setCourseData({ ...courseData, curriculum: updatedCurriculum });
       setContentTitle("");
       setSelectedFile(null);
+      console.log("Content added to section", sectionIndex, {
+        type: contentType,
+        title: contentTitle,
+        file: selectedFile ? selectedFile.name : undefined,
+      });
     }
+    
   };
 
   return (

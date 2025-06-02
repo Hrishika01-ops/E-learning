@@ -5,6 +5,7 @@ import ContentUpload from "./ContentUploader.tsx";
 
 const CreateCourse: React.FC = () => {
   const [activeTab, setActiveTab] = useState("landing");
+
   const [courseData, setCourseData] = useState({
     title: "",
     description: "",
@@ -38,7 +39,6 @@ const CreateCourse: React.FC = () => {
     <div className="container mt-4">
       <h2>Create New Course</h2>
 
-      {/* Navigation Tabs */}
       <div className="btn-group mb-4" role="group">
         <button
           className={`btn btn-outline-primary ${activeTab === "landing" ? "active" : ""}`}
@@ -60,7 +60,6 @@ const CreateCourse: React.FC = () => {
         </button>
       </div>
 
-      {/* Render Active Section */}
       {renderTab()}
 
       <button className="btn btn-success mt-4" onClick={handleSaveCourse}>
