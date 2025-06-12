@@ -1,120 +1,141 @@
-import React, { useRef } from "react";
-import './CourseLanding.css';
+import React, { useState, useRef } from "react";
+import { courseService, CourseData } from "../../services/courseService.ts";
+import "./CourseLanding.css";
 
+interface CourseLandingProps {
+  courseData: CourseData;
+  setCourseData: (data: Partial<CourseData>) => void;
+}
 
-const CourseLanding = ({ courseData, setCourseData }) => {
-  const imageInputRef = useRef(null);
+const CourseLanding: React.FC<CourseLandingProps> = ({ courseData, setCourseData }) => {
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadError, setUploadError] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setCourseData({ ...courseData, [name]: value });
-  };
-
-  const handleImageUpload = (e) => {
-    const file = e.target.files[0];
+  const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
     if (!file) return;
 
-    const validTypes = ["image/jpeg", "image/png", "image/jpg"];
-    if (!validTypes.includes(file.type)) {
-      alert("Please upload a JPG or PNG image.");
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+      setUploadError('Please upload an image file');
       return;
     }
 
-    const img = new Image();
-    img.onload = () => {
-      if (img.width < 750 || img.height < 422) {
-        alert("Image must be at least 750x422 pixels.");
-      } else {
-        const imageUrl = URL.createObjectURL(file);
-        setCourseData({ ...courseData, imageUrl });
+    // Validate file size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      setUploadError('Image size should be less than 5MB');
+      return;
+    }
+
+    // Create a preview URL
+    const objectUrl = URL.createObjectURL(file);
+    setPreviewUrl(objectUrl);
+
+    setIsUploading(true);
+    setUploadError(null);
+
+    try {
+      const { fileUrl } = await courseService.uploadThumbnail(file);
+      if (!fileUrl) {
+        throw new Error('Failed to get image URL');
       }
-    };
-    img.src = URL.createObjectURL(file);
+      setCourseData({ imageUrl: fileUrl });
+      // Clean up the preview URL
+      URL.revokeObjectURL(objectUrl);
+      setPreviewUrl(null);
+    } catch (error: any) {
+      console.error("Error uploading image:", error);
+      setUploadError(error.message || "Failed to upload image. Please try again.");
+      // Keep the preview URL in case of error
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+  ) => {
+    const { name, value } = e.target;
+    setCourseData({ [name]: value });
   };
 
   return (
-    <div className="card p-4 mb-4">
-      <h4>🏠 Course Landing Page</h4>
-
-      <label>Course Title (max 57 characters)</label>
-      <input
-        type="text"
-        name="title"
-        maxLength={57}
-        className="form-control mb-3"
-        value={courseData.title}
-        onChange={handleChange}
-        placeholder="e.g. Master React in 30 Days"
-      />
-
-      <label>Course Subtitle (max 120 characters)</label>
-      <input
-        type="text"
-        name="subtitle"
-        maxLength={120}
-        className="form-control mb-3"
-        value={courseData.subtitle || ""}
-        onChange={handleChange}
-        placeholder="e.g. Build real-world apps with React"
-      />
-
-      <label>Course Description (min 300 characters recommended)</label>
-      <textarea
-        name="description"
-        className="form-control mb-3"
-        rows={5}
-        value={courseData.description}
-        onChange={handleChange}
-        placeholder="What will students learn in your course?"
-      />
-
-      <div className="row mb-3">
-        <div className="col-md-6">
-          <label>Language</label>
-          <select
-            name="language"
-            className="form-select"
-            value={courseData.language || ""}
-            onChange={handleChange}
-          >
-            <option value="">Select Language</option>
-            <option value="English">English (US)</option>
-            <option value="Hindi">Hindi</option>
-            <option value="Tamil">Tamil</option>
-          </select>
+    <div className="course-landing">
+      <div className="form-section">
+        <div className="form-group">
+          <label>Course Title</label>
+          <input
+            type="text"
+            className="form-control"
+            name="title"
+            value={courseData.title}
+            onChange={handleInputChange}
+            placeholder="Enter course title"
+          />
         </div>
-        <div className="col-md-6">
-          <label>Level</label>
+
+        <div className="form-group">
+          <label>Course Description</label>
+          <textarea
+            className="form-control"
+            name="description"
+            value={courseData.description}
+            onChange={handleInputChange}
+            placeholder="Enter course description"
+            rows={4}
+          />
+        </div>
+
+        <div className="form-group">
+          <label>Category</label>
           <select
-            name="level"
             className="form-select"
-            value={courseData.level || ""}
-            onChange={handleChange}
+            name="category"
+            value={courseData.category}
+            onChange={handleInputChange}
           >
-            <option value="">Select Level</option>
-            <option value="Beginner">Beginner</option>
-            <option value="Intermediate">Intermediate</option>
-            <option value="Advanced">Advanced</option>
+            <option value="">Select a category</option>
+            <option value="Programming">Programming</option>
+            <option value="Web Development">Web Development</option>
+            <option value="Mobile Development">Mobile Development</option>
+            <option value="Data Science">Data Science</option>
+            <option value="Machine Learning">Machine Learning</option>
+            <option value="DevOps">DevOps</option>
+            <option value="Database">Database</option>
+            <option value="Cloud Computing">Cloud Computing</option>
           </select>
         </div>
       </div>
 
-      <label>Course Image (750x422px, JPG/PNG)</label>
-      <input
-        type="file"
-        accept="image/png, image/jpeg"
-        className="form-control mb-3"
-        ref={imageInputRef}
-        onChange={handleImageUpload}
-      />
-      {courseData.imageUrl && (
-        <img
-          src={courseData.imageUrl}
-          alt="Course"
-          className="img-fluid mb-3"
-          style={{ maxHeight: "200px", objectFit: "cover" }}
-        />
-      )}
+      <div className="image-section">
+        <div className="image-upload">
+          <label>Course Thumbnail</label>
+          <div className="image-preview" onClick={() => fileInputRef.current?.click()}>
+            {previewUrl ? (
+              <img src={previewUrl} alt="Upload preview" />
+            ) : courseData.imageUrl ? (
+              <img src={courseData.imageUrl} alt="Course thumbnail" />
+            ) : (
+              <div className="upload-placeholder">
+                <i className="fas fa-cloud-upload-alt"></i>
+                <span>Click to upload thumbnail</span>
+              </div>
+            )}
+          </div>
+          <input
+            type="file"
+            ref={fileInputRef}
+            className="d-none"
+            accept="image/*"
+            onChange={handleImageUpload}
+            disabled={isUploading}
+          />
+          {isUploading && <div className="upload-status">Uploading...</div>}
+          {uploadError && <div className="alert alert-danger mt-2">{uploadError}</div>}
+        </div>
+      </div>
     </div>
   );
 };

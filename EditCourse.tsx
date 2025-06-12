@@ -1,7 +1,8 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import { courseService, CourseData, ContentItem } from "../../services/courseService.ts";
-import "./CreateCourse.css";
+import "./EditCourse.css";
+import Navbar from "../home/Navbar.tsx";
 
 interface ContentFormState {
   type: "" | ContentItem["type"];
@@ -18,10 +19,12 @@ interface ContentFormState {
   passingScore: number;
 }
 
-const CreateCourse: React.FC = () => {
+const EditCourse: React.FC = () => {
   const navigate = useNavigate();
+  const { courseId } = useParams<{ courseId: string }>();
   const [currentStep, setCurrentStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   
   const [courseData, setCourseData] = useState<CourseData>({
@@ -44,6 +47,28 @@ const CreateCourse: React.FC = () => {
     questions: [],
     passingScore: 70
   });
+
+  // Fetch course data when component mounts
+  useEffect(() => {
+    const fetchCourse = async () => {
+      try {
+        setIsLoading(true);
+        const response = await courseService.getCourse(courseId!);
+        setCourseData(response.data);
+      } catch (err: any) {
+        setError(err.response?.data?.message || "Failed to fetch course");
+        if (err.response?.status === 404) {
+          navigate("/instructor/courses");
+        }
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    if (courseId) {
+      fetchCourse();
+    }
+  }, [courseId, navigate]);
 
   const validateStep1 = () => {
     if (!courseData.title?.trim()) {
@@ -200,7 +225,7 @@ const CreateCourse: React.FC = () => {
     }
   };
 
-  const handleSaveCourse = async () => {
+  const handleUpdateCourse = async () => {
     if (!courseData.content || courseData.content.length === 0) {
       setError("Please add at least one content item");
       return;
@@ -210,11 +235,28 @@ const CreateCourse: React.FC = () => {
     setError(null);
 
     try {
-      const response = await courseService.createCourse(courseData);
+      await courseService.updateCourse(courseId!, courseData);
       navigate("/instructor/courses");
     } catch (err: any) {
-      setError(err.response?.data?.message || "Failed to create course");
+      setError(err.response?.data?.message || "Failed to update course");
     } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleDeleteCourse = async () => {
+    if (!window.confirm("Are you sure you want to delete this course? This action cannot be undone.")) {
+      return;
+    }
+
+    setIsSubmitting(true);
+    setError(null);
+
+    try {
+      await courseService.deleteCourse(courseId!);
+      navigate("/instructor/courses");
+    } catch (err: any) {
+      setError(err.response?.data?.message || "Failed to delete course");
       setIsSubmitting(false);
     }
   };
@@ -584,55 +626,80 @@ const CreateCourse: React.FC = () => {
     </div>
   );
 
+  if (isLoading) {
+    return (
+      <>
+        <Navbar userRole="Instructor" />
+        <div className="text-center mt-5">
+          <div className="spinner-border" role="status">
+            <span className="visually-hidden">Loading...</span>
+          </div>
+        </div>
+      </>
+    );
+  }
+
   return (
-    <div className="create-course-container">
-      <h2 className="create-header">Create New Course</h2>
-
-      <div className="step-indicator">
-        <div className={`step ${currentStep === 1 ? 'active' : ''}`}>
-          <div className="step-number">1</div>
-          <div className="step-title">Course Details</div>
-        </div>
-        <div className="step-line"></div>
-        <div className={`step ${currentStep === 2 ? 'active' : ''}`}>
-          <div className="step-number">2</div>
-          <div className="step-title">Course Content</div>
-        </div>
-      </div>
-
-      {error && (
-        <div className="alert alert-danger" role="alert">
-          {error}
-        </div>
-      )}
-
-      <div className="step-content">
-        {currentStep === 1 ? renderStep1() : renderStep2()}
-      </div>
-
-      <div className="action-buttons">
-        {currentStep === 2 && (
-          <button className="btn btn-secondary" onClick={handlePrevious}>
-            Previous
-          </button>
-        )}
-        
-        {currentStep === 1 ? (
-          <button className="btn btn-primary" onClick={handleNext}>
-            Next
-          </button>
-        ) : (
-          <button 
-            className="btn btn-success" 
-            onClick={handleSaveCourse}
-            disabled={isSubmitting || !courseData.content?.length}
+    <>
+      <Navbar userRole="Instructor" />
+      <div className="create-course-container">
+        <div className="d-flex justify-content-between align-items-center mb-4">
+          <h2 className="create-header">Edit Course</h2>
+          <button
+            className="btn btn-danger"
+            onClick={handleDeleteCourse}
+            disabled={isSubmitting}
           >
-            {isSubmitting ? "Creating Course..." : "Create Course"}
+            Delete Course
           </button>
+        </div>
+
+        <div className="step-indicator">
+          <div className={`step ${currentStep === 1 ? 'active' : ''}`}>
+            <div className="step-number">1</div>
+            <div className="step-title">Course Details</div>
+          </div>
+          <div className="step-line"></div>
+          <div className={`step ${currentStep === 2 ? 'active' : ''}`}>
+            <div className="step-number">2</div>
+            <div className="step-title">Course Content</div>
+          </div>
+        </div>
+
+        {error && (
+          <div className="alert alert-danger" role="alert">
+            {error}
+          </div>
         )}
+
+        <div className="step-content">
+          {currentStep === 1 ? renderStep1() : renderStep2()}
+        </div>
+
+        <div className="action-buttons">
+          {currentStep === 2 && (
+            <button className="btn btn-secondary" onClick={handlePrevious}>
+              Previous
+            </button>
+          )}
+          
+          {currentStep === 1 ? (
+            <button className="btn btn-primary" onClick={handleNext}>
+              Next
+            </button>
+          ) : (
+            <button 
+              className="btn btn-success" 
+              onClick={handleUpdateCourse}
+              disabled={isSubmitting || !courseData.content?.length}
+            >
+              {isSubmitting ? "Updating Course..." : "Update Course"}
+            </button>
+          )}
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 
-export default CreateCourse;
+export default EditCourse;
